@@ -51,68 +51,61 @@ const RECIPE_SITES = [
  * Extract recipe URLs from HTML search results
  */
 function extractRecipeUrls(html: string, baseUrl: string): string[] {
-  const urls: string[] = [];
+  const urls = new Set<string>();
+
+  const getAbsoluteUrl = (path: string): string | null => {
+    if (path.startsWith('/')) {
+      try {
+        const base = new URL(baseUrl);
+        return `${base.protocol}//${base.host}${path}`;
+      } catch {
+        return null;
+      }
+    }
+    return path;
+  };
 
   // Match href attributes that look like recipe URLs
-  const hrefRegex = /href=["']([^"']+(?:recipe|recipes)[^"']*)/gi;
+  const hrefRegex = /href=["']([^"']+(?:recipe|recipes)[^"']*)["']/gi;
   let match;
 
   while ((match = hrefRegex.exec(html)) !== null) {
-    let url = match[1];
+    const url = getAbsoluteUrl(match[1]);
+    if (!url) continue;
 
-    // Handle relative URLs
-    if (url.startsWith('/')) {
-      try {
-        const base = new URL(baseUrl);
-        url = `${base.protocol}//${base.host}${url}`;
-      } catch {
-        continue;
-      }
-    }
-
-    // Validate URL
     try {
       new URL(url);
-      if (!urls.includes(url) && isValidRecipeUrl(url)) {
-        urls.push(url);
+      if (isValidRecipeUrl(url)) {
+        urls.add(url);
       }
     } catch {
       continue;
     }
   }
 
-  // Also try to find JSON-LD links in search results
-  const jsonLdRegex = /<a[^>]*href=["']([^"']+)["'][^>]*>/gi;
-  while ((match = jsonLdRegex.exec(html)) !== null) {
-    let url = match[1];
-
-    if (url.startsWith('/')) {
-      try {
-        const base = new URL(baseUrl);
-        url = `${base.protocol}//${base.host}${url}`;
-      } catch {
-        continue;
-      }
-    }
+  // Also try to find other potential recipe links
+  const genericLinkRegex = /<a[^>]*href=["']([^"']+)["'][^>]*>/gi;
+  while ((match = genericLinkRegex.exec(html)) !== null) {
+    const url = getAbsoluteUrl(match[1]);
+    if (!url || urls.has(url)) continue;
 
     try {
       const parsed = new URL(url);
       // Include URLs that contain recipe-like path segments
       if (
-        !urls.includes(url) &&
-        (parsed.pathname.includes('/recipe') ||
-          parsed.pathname.includes('/recipes/') ||
-          parsed.pathname.match(/\/\d{4,}/) || // numeric IDs often indicate recipes
-          parsed.pathname.match(/\/[a-z]+-[a-z]+-[a-z]+/)) // slug patterns
+        parsed.pathname.includes('/recipe') ||
+        parsed.pathname.includes('/recipes/') ||
+        parsed.pathname.match(/\/\d{4,}/) || // numeric IDs often indicate recipes
+        parsed.pathname.match(/\/[a-z]+-[a-z]+-[a-z]+/) // slug patterns
       ) {
-        urls.push(url);
+        urls.add(url);
       }
     } catch {
       continue;
     }
   }
 
-  return urls;
+  return Array.from(urls);
 }
 
 /**
