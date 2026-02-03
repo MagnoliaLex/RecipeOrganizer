@@ -54,15 +54,13 @@ function extractRecipeUrls(html: string, baseUrl: string): string[] {
   const urls = new Set<string>();
 
   const getAbsoluteUrl = (path: string): string | null => {
-    if (path.startsWith('/')) {
-      try {
-        const base = new URL(baseUrl);
-        return `${base.protocol}//${base.host}${path}`;
-      } catch {
-        return null;
-      }
+    try {
+      // The URL constructor can handle absolute, relative, and protocol-relative URLs when a base URL is provided.
+      return new URL(path, baseUrl).href;
+    } catch {
+      // This can happen for invalid URLs like 'javascript:void(0)'
+      return null;
     }
-    return path;
   };
 
   // Match href attributes that look like recipe URLs
@@ -73,13 +71,8 @@ function extractRecipeUrls(html: string, baseUrl: string): string[] {
     const url = getAbsoluteUrl(match[1]);
     if (!url) continue;
 
-    try {
-      new URL(url);
-      if (isValidRecipeUrl(url)) {
-        urls.add(url);
-      }
-    } catch {
-      continue;
+    if (isValidRecipeUrl(url)) {
+      urls.add(url);
     }
   }
 
