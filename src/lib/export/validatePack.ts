@@ -25,7 +25,7 @@ const MAX_SAME_MEALTYPE_PERCENT = 0.6;
  * - Warns if any recipe pair has similarity > 0.80
  * - Warns if too many same cuisine or mealType
  */
-export async function validatePack(recipes: Recipe[]): Promise<PackValidation> {
+export function validatePack(recipes: Recipe[]): PackValidation {
   const warnings: string[] = [];
   const similarityWarnings: SimilarityWarning[] = [];
 
