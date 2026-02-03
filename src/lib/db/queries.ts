@@ -200,13 +200,13 @@ export async function listRecipes(filters: SearchFilters): Promise<Recipe[]> {
   }
 
   if (filters.mealType) {
-    sql += ' AND mealType_json LIKE ?';
-    params.push(`%"${filters.mealType}"%`);
+    sql += ' AND EXISTS (SELECT 1 FROM json_each(mealType_json) WHERE json_each.value = ?)';
+    params.push(filters.mealType);
   }
 
   if (filters.dietaryTag) {
-    sql += ' AND dietaryTags_json LIKE ?';
-    params.push(`%"${filters.dietaryTag}"%`);
+    sql += ' AND EXISTS (SELECT 1 FROM json_each(dietaryTags_json) WHERE json_each.value = ?)';
+    params.push(filters.dietaryTag);
   }
 
   if (filters.maxTime) {

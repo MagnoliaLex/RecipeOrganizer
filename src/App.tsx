@@ -4,6 +4,7 @@ import Layout from './components/Layout';
 import Library from './pages/Library';
 import RecipeDetail from './pages/RecipeDetail';
 import Import from './pages/Import';
+import CrawlEngine from './pages/CrawlEngine';
 import Packs from './pages/Packs';
 import Suggest from './pages/Suggest';
 import { initDatabase } from './lib/db/client';
@@ -54,6 +55,7 @@ function App() {
         <Route path="/library" element={<Library />} />
         <Route path="/recipe/:id" element={<RecipeDetail />} />
         <Route path="/import" element={<Import />} />
+        <Route path="/crawl" element={<CrawlEngine />} />
         <Route path="/packs" element={<Packs />} />
         <Route path="/suggest" element={<Suggest />} />
       </Routes>

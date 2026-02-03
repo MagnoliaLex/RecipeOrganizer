@@ -8,6 +8,7 @@ interface LayoutProps {
 const navItems = [
   { path: '/library', label: 'Library', icon: BookIcon },
   { path: '/import', label: 'Import', icon: UploadIcon },
+  { path: '/crawl', label: 'Crawl', icon: GlobeIcon },
   { path: '/packs', label: 'Packs', icon: PackageIcon },
   { path: '/suggest', label: 'Suggest', icon: LightbulbIcon },
 ];
@@ -128,6 +129,14 @@ function SearchIcon({ className }: { className?: string }) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+    </svg>
+  );
+}
+
+function GlobeIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
     </svg>
   );
 }
