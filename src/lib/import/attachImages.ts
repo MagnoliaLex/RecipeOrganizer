@@ -22,8 +22,9 @@ export async function attachImage(
   // Ensure images directory exists
   try {
     await mkdir(IMAGES_DIR, { baseDir: BaseDirectory.AppData, recursive: true });
-  } catch {
-    // Directory may already exist
+  } catch (e) {
+    // It's okay if the directory already exists. Log for other potential errors.
+    console.info(`Could not create directory '${IMAGES_DIR}', it may already exist.`, e);
   }
 
   // Generate unique filename
