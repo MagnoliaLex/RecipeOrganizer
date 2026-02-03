@@ -24,7 +24,7 @@
       }
     ],
     "security": {
-      "csp": null
+"csp": "default-src 'self' asset:; connect-src 'self' https:; img-src 'self' asset: https: data:; style-src 'self' 'unsafe-inline';"
     }
   },
   "plugins": {
